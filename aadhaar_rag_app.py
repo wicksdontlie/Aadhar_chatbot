@@ -71,34 +71,35 @@ def get_answer(question, passages, qa_pipe):
     return best
 
 # ── Sidebar ──────────────────────────────────────────────────
-with st.sidebar:
-    st.header("📄 Upload Document")
-    uploaded_file = st.file_uploader("Choose a PDF", type=["pdf"])
+# ── Input Method ─────────────────────────────────────────────
+st.sidebar.header("📄 Input Document")
 
-    if uploaded_file:
-        st.success(f"✅ {uploaded_file.name}")
+input_mode = st.sidebar.radio(
+    "Choose input method:",
+    ["Paste Text", "Use Sample Aadhaar"]
+)
 
-    st.markdown("---")
+if input_mode == "Paste Text":
+    text = st.text_area("Paste Aadhaar text here", height=250)
 
-    if st.button("🗑️ Clear Chat"):
-        st.session_state.messages = []
-        st.rerun()
+elif input_mode == "Use Sample Aadhaar":
+    text = """
+    Name: Rahul Sharma
+    DOB: 01/01/1990
+    Gender: Male
+    Aadhaar Number: 1234 5678 9012
+    Address: 123 MG Road, Mumbai, India
+    """
 
 # ── Chat memory ──────────────────────────────────────────────
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # ── No file uploaded ─────────────────────────────────────────
-if not uploaded_file:
-    st.info("👈 Upload an Aadhaar PDF from the sidebar to get started.")
-    st.stop()
 
 # ── Process PDF ──────────────────────────────────────────────
-with st.spinner("Reading PDF..."):
-    text = extract_text(uploaded_file.read())
-
 if not text.strip():
-    st.error("No readable text found in PDF.")
+    st.info("Please provide Aadhaar text to continue.")
     st.stop()
 
 passages = get_passages(text)
