@@ -1,9 +1,6 @@
 streamlit
-pdfplumber
+pymupdf
 transformers
 torch
-torchvision
-torchaudio
 sentencepiece
 nltk
-pyngrok
