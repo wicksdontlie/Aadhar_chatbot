@@ -1,8 +1,9 @@
 import streamlit as st
-import pdfplumber
+import pymupdf
 import nltk
 import warnings
 import io
+import fitz
 
 warnings.filterwarnings("ignore")
 
@@ -27,11 +28,9 @@ def load_qa():
 def extract_text(pdf_bytes):
     text = ""
     try:
-        with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
-            for page in pdf.pages:
-                t = page.extract_text()
-                if t:
-                    text += t + "\n"
+        pdf = fitz.open(stream=pdf_bytes, filetype="pdf")
+        for page in pdf:
+            text += page.get_text()
     except Exception as e:
         st.error("Error reading PDF.")
         return ""
